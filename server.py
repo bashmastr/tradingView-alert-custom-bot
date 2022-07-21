@@ -4,8 +4,10 @@ import telegrambot , volumetric
 import captureutil
 import pandas as pd
 from tabulate import tabulate
-
+ 
 app = Flask('')
+
+
 @app.route('/webhook', methods=['POST', 'GET'])
 def post_message():
   try:
@@ -38,6 +40,7 @@ def post_message():
 
 @app.route('/vol', methods=['POST', 'GET'])
 def post_message_2():
+  
   try:
     jsonRequest=request.args.get("jsonRequest")
     chart = request.args.get("chart")
@@ -53,8 +56,8 @@ def post_message_2():
           chart = jsonPayload.pop('Custom')
         dataframe = pd.DataFrame(jsonPayload, index=[0]).transpose()
         payload = '```'+tabulate(dataframe,tablefmt=tblfmt)+'```'
-      # print("[I] Payload: \n", payload)
-      volumetric.sendMessage(payload)
+      print("[I] Payload: \n", payload)
+      return volumetric.sendMessage(payload)
       if chart != None:
         captureutil.send_chart_async(chart, loginRequired)
       return 'success', 200
