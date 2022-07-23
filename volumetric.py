@@ -22,21 +22,52 @@ def parse_payload(payload: str) -> dict:
     
     return dic.named  # .named convert dic result to simple dic
 
-def main(payload: str) -> bool:
+def requiredFormat (data : dict):
 
-    print(f"main->payload -- {payload}")
+    result = ''
+    for key, value in enumerate(data):
+        result += f" {value} = {str(data[value])} \n"
+    return result
+
+def sendMessage(data):
+    tg_bot = Bot(token="5434032639:AAGDmDprsGYFYZI3SanqGj9A6MaNM-rOJCo")
+    channel = "-1001646160782"
+
+    try:
+        print('--->Sending message to telegram')
+        tg_bot.sendMessage(
+            channel,
+            data,
+            parse_mode="MARKDOWN",
+        )
+        return True
+    except KeyError:
+        print('--->Key error - sending error to telegram')
+        tg_bot.sendMessage(
+            channel,
+            data,
+            parse_mode="MARKDOWN",
+        )
+    except Exception as e:
+        print("[X] Telegram Error:\n>", e)        
+    return False
+
+
+def main(payload: str):
+
+    # print(f"main->payload -- {payload}")
     dic = parse_payload(payload)
     payload_df = pd.DataFrame( dic ,index=[0])
     payload_df['TIME'] = pd.to_datetime(payload_df['TIME']) + timedelta(hours=4)
-    print(f"main->Palyload_df -- {payload_df}")
-    print(f"main->Inserting to database -- {payload_df.size}")
+    # print(f"main->Palyload_df -- {payload_df}")
+    # print(f"main->Inserting to database -- {payload_df.size}")
     payload_df.to_sql(  'volumetric', 
                         con= engine,
                         index=False,
                         if_exists="append")
-                        
+
     ticker = payload_df['TICKER'][0]
-    print("ticker---", ticker)
+    # print("ticker---", ticker)
     df = pd.read_sql(f"""
                     SELECT *,
                     TIMESTAMPDIFF(SECOND, v1.TIME, v2.TIME) as diff
@@ -48,32 +79,12 @@ def main(payload: str) -> bool:
                     and TIMESTAMPDIFF(SECOND, v1.TIME, v2.TIME) <= {TIMEDIFF};
                     """, 
                     con=engine)
+    print("dataframe" , dic)
     if df.empty:
-        return "False"
+        return False
     else:
-        return "True"
-
-def sendMessage(data):
-    # tg_bot = Bot(token=os.environ['TOKEN'])
-    # channel = os.environ['CHANNEL']
-    print("Incoming--Data", data)
-    # print("formated", main(data))
-    return main(data)
-    try:
-        print('--->Sending message to telegram')
-        tg_bot.sendMessage(
-            channel,
-            main(data),
-            parse_mode="MARKDOWN",
-        )
+        
+        RESULT = requiredFormat(dic)
+        sendMessage(RESULT)
         return True
-    except KeyError:
-        print('--->Key error - sending error to telegram')
-        tg_bot.sendMessage(
-            channel,
-            "hi",
-            parse_mode="MARKDOWN",
-        )
-    except Exception as e:
-        print("[X] Telegram Error:\n>", e)
-    return False
+

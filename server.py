@@ -26,7 +26,7 @@ def post_message():
         dataframe = pd.DataFrame(jsonPayload, index=[0]).transpose()
         payload = '```'+tabulate(dataframe,tablefmt=tblfmt)+'```'
       # print("[I] Payload: \n", payload)
-      telegrambot.sendMessage(payload)
+      telegrambot.main(payload)
       if chart != None:
         captureutil.send_chart_async(chart, loginRequired)
       return 'success', 200
@@ -57,7 +57,7 @@ def post_message_2():
         dataframe = pd.DataFrame(jsonPayload, index=[0]).transpose()
         payload = '```'+tabulate(dataframe,tablefmt=tblfmt)+'```'
       print("[I] Payload: \n", payload)
-      return volumetric.sendMessage(payload)
+      volumetric.main(payload)
       if chart != None:
         captureutil.send_chart_async(chart, loginRequired)
       return 'success', 200
