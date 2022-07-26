@@ -26,10 +26,11 @@ def requiredFormat (data : dict):
 
     result = ''
     for key, value in enumerate(data):
-        result += f" {value} = {str(data[value])} \n"
+        result += f" {value}  =  {str(data[value])} "
     return result
 
 def sendMessage(data):
+    
     tg_bot = Bot(token="5434032639:AAGDmDprsGYFYZI3SanqGj9A6MaNM-rOJCo")
     channel = "-1001646160782"
 
@@ -54,7 +55,7 @@ def sendMessage(data):
 
 
 def main(payload: str):
-
+    url = 'https://www.tradingview.com/chart/7GGx5HmW/?symbol=BINANCE%3A'
     # print(f"main->payload -- {payload}")
     dic = parse_payload(payload)
     payload_df = pd.DataFrame( dic ,index=[0])
@@ -79,6 +80,7 @@ def main(payload: str):
                     and TIMESTAMPDIFF(SECOND, v1.TIME, v2.TIME) <= {TIMEDIFF};
                     """, 
                     con=engine)
+    dic['URL'] = url + dic['TICKER']
     print("dataframe" , dic)
     if df.empty:
         return False

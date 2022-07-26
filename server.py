@@ -24,8 +24,8 @@ def post_message():
           chart = jsonPayload.pop('Custom')
         dataframe = pd.DataFrame(jsonPayload, index=[0]).transpose()
         payload = '```'+tabulate(dataframe,tablefmt=tblfmt)+'```'
-      # print("[I] Payload: \n", payload)
-      telegrambot.main(payload)
+      print("[I] Payload: \n", payload)
+      telegrambot.sendMessage(payload)
       if chart != None:
         captureutil.send_chart_async(chart, loginRequired)
       return 'success', 200
