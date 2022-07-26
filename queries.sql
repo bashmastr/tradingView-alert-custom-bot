@@ -1,3 +1,5 @@
+-- volumetric return if diff under 60 SECOND
+
 SELECT *,
 TIMESTAMPDIFF(SECOND, v1.TIME, v2.TIME) as diff
 	FROM volumetric v1 ,  volumetric v2

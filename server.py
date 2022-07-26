@@ -7,7 +7,6 @@ from tabulate import tabulate
  
 app = Flask('')
 
-
 @app.route('/webhook', methods=['POST', 'GET'])
 def post_message():
   try:
