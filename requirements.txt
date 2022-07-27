@@ -1,6 +1,8 @@
 telegram
 flask
-captureutil
+python-telegram-bot
 pandas
 tabulate
 sqlalchemy
+parse
+Flask-MySQLdb

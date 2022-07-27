@@ -26,11 +26,11 @@ def requiredFormat (data : dict):
 
     result = ''
     for key, value in enumerate(data):
-        result += f" {value}  =  {str(data[value])} "
+        result += f" {value}  =  {str(data[value])}  \n"
     return result
 
 def sendMessage(data):
-    
+
     tg_bot = Bot(token="5434032639:AAGDmDprsGYFYZI3SanqGj9A6MaNM-rOJCo")
     channel = "-1001646160782"
 
