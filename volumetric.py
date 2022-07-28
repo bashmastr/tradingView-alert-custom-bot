@@ -13,14 +13,22 @@ TIMEDIFF = 60 # in seconds
 
 
 def parse_payload(payload: str) -> dict:
-
+    # payload = b'Pair= FORTHUSDT,\nRemarks= 6p na 3k-myfav,\nAlert For= Pumping volume,\nTimeFrame= 1,\nVolume= 3k+,\nCurrentPrice= 3.86,\ntime= 2022-07-28T15:24:16Z'
     # payload = b'Pair= FLMUSDT,\nRemarks= 4/5 check ltf volume,\nAlert For= 1d SG,\nTimeFrame= Dsdf,\nCurrentPrice= 0.1215,\nVolume= 12917005, \ntime= 2022-07-13T05:07:19Z'
     if type(payload) == bytes : payload = payload.decode("utf-8") #bytes string to string (byte string start with b'somethin' -> 'something)
 
-    p = compile("Pair= {TICKER},\\nRemarks= {REMARKS},\\nAlert For= 1d SG,\\nTimeFrame= {TIMEFRAME},\\nCurrentPrice= {CURRENTPRICE},\\nVolume= {VOLUME}, \\ntime= {TIME}")
-    dic = p.parse(payload)
-    
-    return dic.named  # .named convert dic result to simple dic
+    dataRem = re.sub("\n"," ", payload)
+    dataRem = dataRem.replace("\\n"," ")
+    dataToList = dataRem.split(',')
+
+    dataFormated = {}
+    for row in dataToList:
+        key , value = row.split("=")
+        key = key.strip().upper()
+        value = value.strip()
+        dataFormated[key] = value
+    print('payload after parse', dataFormated)
+    return dataFormated
 
 def requiredFormat (data : dict):
 
@@ -59,14 +67,19 @@ def main(payload: str):
     # print(f"main->payload -- {payload}")
     dic = parse_payload(payload)
     payload_df = pd.DataFrame( dic ,index=[0])
+
     payload_df['TIME'] = pd.to_datetime(payload_df['TIME']) + timedelta(hours=4)
     # print(f"main->Palyload_df -- {payload_df}")
     # print(f"main->Inserting to database -- {payload_df.size}")
-    payload_df.to_sql(  'volumetric', 
+    payload_df.rename(columns = {'PAIR':'TICKER'}, inplace = True)
+
+    payload_df = payload_df[['TICKER', 'REMARKS', 'CURRENTPRICE','VOLUME', 'TIMEFRAME', 'TIME']]
+
+    payload_df.to_sql(  'volumetric',
                         con= engine,
                         index=False,
                         if_exists="append")
-
+    print("ticker ----",payload_df['TICKER'][0])
     ticker = payload_df['TICKER'][0]
     # print("ticker---", ticker)
     df = pd.read_sql(f"""
@@ -80,7 +93,7 @@ def main(payload: str):
                     and TIMESTAMPDIFF(SECOND, v1.TIME, v2.TIME) <= {TIMEDIFF};
                     """, 
                     con=engine)
-    dic['URL'] = url + dic['TICKER']
+    dic['URL'] = url + dic['PAIR']
     print("dataframe" , dic)
     if df.empty:
         return False
