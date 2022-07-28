@@ -39,8 +39,8 @@ def requiredFormat (data : dict):
 
 def sendMessage(data):
 
-    tg_bot = Bot(token="5434032639:AAGDmDprsGYFYZI3SanqGj9A6MaNM-rOJCo")
-    channel = "-1001646160782"
+    tg_bot = Bot(token="5575339974:AAFUjuF1zV8bZ3HeoEePkpBlErnYBi9AS_U")
+    channel = "-1001787592229"
 
     try:
         print('--->Sending message to telegram')

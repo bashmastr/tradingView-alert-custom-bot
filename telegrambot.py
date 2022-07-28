@@ -92,8 +92,8 @@ def main(data : str):
   return requiredFormat(dataFormated)
   
 def sendMessage(data):
-    tg_bot = Bot(token="5434032639:AAGDmDprsGYFYZI3SanqGj9A6MaNM-rOJCo")
-    channel = "-1001646160782"
+    tg_bot = Bot(token="5512335390:AAED1cLRP1qwQ6f-H1UhCN16Er6G2HPhqvc")
+    channel = "-1001797821703"
     print("Incoming--Data", data)
     print("formated", main(data))
     try:
