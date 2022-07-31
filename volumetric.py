@@ -94,6 +94,7 @@ def main(payload: str):
                     """, 
                     con=engine)
     dic['URL'] = url + dic['PAIR']
+    dic['TIME'] = payload_df['TIME']
     print("dataframe" , dic)
     if df.empty:
         return False
