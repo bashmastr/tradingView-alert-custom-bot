@@ -1,0 +1,7 @@
+db_connection.py
+commands.txt
+log.txt
+nohup.out
+server.pyc
+*.pyc
+__pycache__
