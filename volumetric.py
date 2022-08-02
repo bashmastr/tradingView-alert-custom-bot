@@ -39,8 +39,8 @@ def requiredFormat (data : dict):
 
 def sendMessage(data):
 
-    tg_bot = Bot(token="5575339974:AAFUjuF1zV8bZ3HeoEePkpBlErnYBi9AS_U")
-    channel = "-1001787592229"
+    tg_bot = Bot(token="5434032639:AAGDmDprsGYFYZI3SanqGj9A6MaNM-rOJCo")
+    channel = "-1001646160782"
 
     try:
         print('--->Sending message to telegram')
@@ -84,13 +84,18 @@ def main(payload: str):
     # print("ticker---", ticker)
     df = pd.read_sql(f"""
                     SELECT *,
-                    TIMESTAMPDIFF(SECOND, v1.TIME, v2.TIME) as diff
-                    FROM volumetric v1 ,  volumetric v2
-                    where v1.TICKER = '{ticker}'
-                    and v1.TICKER =  v2.TICKER
-                    and v1.ID <> v2.ID
-                    and v2.ID = (SELECT MAX(ID) FROM volumetric where TICKER = '{ticker}')
-                    and TIMESTAMPDIFF(SECOND, v1.TIME, v2.TIME) <= {TIMEDIFF};
+
+                TIMESTAMPDIFF(SECOND, v2.TIME, v1.TIME) AS diff 
+                from volumetric v1, volumetric v2
+                where v1.id = (SELECT max(id) FROM volumetric
+                        WHERE TICKER = '{ticker}')
+                and   v2.id = (  
+                    SELECT MAX(id) from volumetric 
+                        where id <> (
+                            SELECT max(id) FROM volumetric 
+                            WHERE TICKER = '{ticker}') 
+                    and  TICKER = '{ticker}')
+                and TIMESTAMPDIFF(SECOND, v2.TIME, v1.TIME) <= 119
                     """, 
                     con=engine)
     dic['URL'] = url + dic['PAIR']
