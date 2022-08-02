@@ -9,7 +9,7 @@ import logging
 from parse import compile
 from parse import *
 
-TIMEDIFF = 60 # in seconds
+TIMEDIFF = 100 # in seconds
 
 
 def parse_payload(payload: str) -> dict:
@@ -95,7 +95,7 @@ def main(payload: str):
                             SELECT max(id) FROM volumetric 
                             WHERE TICKER = '{ticker}') 
                     and  TICKER = '{ticker}')
-                and TIMESTAMPDIFF(SECOND, v2.TIME, v1.TIME) <= 119
+                and TIMESTAMPDIFF(SECOND, v2.TIME, v1.TIME) <= {TIMEDIFF}
                     """, 
                     con=engine)
     dic['URL'] = url + dic['PAIR']
